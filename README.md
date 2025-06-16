@@ -1,4 +1,4 @@
-# crypto
+# @pdg/crypto
 
 Typescript Crypto Module
 
