@@ -2,7 +2,7 @@
   "name": "@pdg/crypto",
   "title": "Typescript Crypto Module",
   "description": "Typescript Crypto Module",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
@@ -52,7 +52,7 @@
   "dependencies": {
     "base-64": "^1.0.0",
     "md5": "^2.3.0",
-    "sha.js": "^2.4.11",
+    "sha.js": "^2.4.12",
     "utf8": "^3.0.0"
   },
   "devDependencies": {
