@@ -1,9 +1,9 @@
-export * from './_md5';
+export * from './md5';
 export * from './base64';
 export * from './sha1';
 export * from './sha256';
 
-import md5 from './_md5';
+import md5 from './md5';
 import base64 from './base64';
 import sha1 from './sha1';
 import sha256 from './sha256';
