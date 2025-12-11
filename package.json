@@ -2,7 +2,7 @@
   "name": "@pdg/crypto",
   "title": "Typescript Crypto Module",
   "description": "Typescript Crypto Module",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
