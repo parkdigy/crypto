@@ -4,7 +4,7 @@
 
 2026-11-02 기준 저장소의 소스, 설정, npm 스크립트를 분석했다. 이 문서는 탐색 안내이며, 실제 코드와 설정이 변경되면 해당 파일을 우선하고 문서도 갱신한다.
 
-이 프로젝트는 `@pdg/crypto` TypeScript 라이브러리다. Base64 인코딩·디코딩과 MD5, SHA-1, SHA-256 해시를 제공하며 각 기능의 테스트가 있다. 예제는 현재 콘솔 출력만 수행한다.
+이 프로젝트는 `@pdg/crypto` TypeScript 라이브러리다. Base64 인코딩·디코딩과 MD5, SHA-1, SHA-256 해시를 제공한다. `src/index.ts`는 각 이름 있는 API와 이들을 담은 기본 객체를 내보낸다. 예제는 현재 콘솔 출력만 수행한다.
 
 ## 파일별 책임
 
@@ -12,7 +12,7 @@
 | --- | --- |
 | `src/index.ts` | 번들 진입점. Base64, MD5, SHA-1, SHA-256 API를 내보냄 |
 | `src/` | 라이브러리 구현. Base64와 해시별 모듈 |
-| `test/*.test.ts` | Base64 및 해시 API 동작 검증 |
+| `test/*.test.ts` | 소스 진입점의 Base64 및 해시 API 검증. 설치 패키지는 검증하지 않음 |
 | `examples/src/example.ts` | 현재 `Hello, World!` 출력. 실제 API 사용 예제가 필요하면 갱신 |
 | `examples/package.json` | `tsx` 실행 환경. 루트 패키지 의존성이나 workspace 연결은 현재 없음 |
 | `package.json` | 공개 진입점, 배포 파일, 개발·빌드·게시 명령 |
@@ -33,7 +33,7 @@ src/index.ts
       ├─ dist/index.esm.js   (ES module 코드 출력)
       └─ dist/index.d.ts    (공개 타입 선언)
 
-test/*.test.ts ─ ts-jest ─ Node 환경 테스트
+test/*.test.ts ─ 소스 진입점 ─ ts-jest ─ Node 환경 테스트
 examples/src/example.ts ─ tsx ─ 콘솔 예제
 ```
 
@@ -66,20 +66,8 @@ examples/src/example.ts ─ tsx ─ 콘솔 예제
 ## 배포·설정 변경 시 확인할 사항
 
 1. **모듈 형식:** 패키지에 `"type": "module"`이 있는데 CommonJS 출력 경로가 `.js`이다. Node에서 해당 파일은 ESM으로 해석되므로 `require` 진입점 호환성을 보장할 수 없다. 기능 구현과 별개인 기존 설정 문제로 기록하며, 모듈 설정을 변경하거나 게시할 때 실제 패키지를 소비하는 `import` / `require` 검증을 수행한다.
-2. **실행 환경:** Rollup의 `context: 'window'`는 브라우저 API 지원을 보장하지 않는다. 현재 테스트는 Node 환경이고 TypeScript `lib`는 ES2017이다. 브라우저 전용 기능을 추가하려면 지원 환경부터 정한다.
-3. **배포 범위:** `files`는 `dist`, `README.md`를 지정한다. 진입점 파일 존재와 선언 파일 누락 여부는 `npm pack --dry-run`으로 확인한다. 에이전트 문서와 작업 기록을 배포물에 포함할 이유는 없다.
-4. **예제 연결:** 예제에는 루트 패키지 의존성이 선언돼 있지 않다. 소스 직접 호출과 설치 패키지 소비 검증을 구분한다. 공개 진입점 검증이 목적이면 빌드된 패키지를 실제로 설치한 소비 환경이 필요하다.
-5. **생성 파일:** `dist/`는 생성 파일이며 현재 일부 파일은 Git에서 추적된다. 빌드 후 생성물의 변경 여부를 확인한다.
-
-## 상위 템플릿의 분석 시 검증 기록
-
-아래는 상위 템플릿에서 수행한 검증이며 이 프로젝트의 검증 결과가 아니다.
-
-| 항목 | 결과 |
-| --- | --- |
-| `npm run tsc` | 통과 |
-| `npm run lint` | 통과 |
-| `npm test -- --runInBand --watchman=false` | 템플릿 테스트 1개 통과 |
-| `./node_modules/.bin/rollup -c --bundleConfigAsCjs` | 성공. 빈 진입점으로 인한 empty chunk 경고 발생 |
-
-`npm run build` 전체, 깨끗한 의존성 재설치, npm 게시, 설치 소비자의 `import` / `require` 호환성은 검증하지 않았다. 위 기록은 분석 당시 결과이며 다음 작업의 검증을 대체하지 않는다.
+2. **빌드 전 기존 변경:** Rollup은 `dist/*`를 삭제하고 재생성한다. 일부 산출물은 Git 추적 대상이므로 빌드 전 기존 변경을 보존한다.
+3. **실행 환경:** Rollup의 `context: 'window'`는 브라우저 API 지원을 보장하지 않는다. 현재 테스트는 Node 환경이고 TypeScript `lib`는 ES2017이다. 브라우저 전용 기능을 추가하려면 지원 환경부터 정한다.
+4. **배포 범위:** `files`는 `dist`, `README.md`를 지정한다. 진입점 파일 존재와 선언 파일 누락 여부는 `npm pack --dry-run`으로 확인한다. 에이전트 문서와 작업 기록을 배포물에 포함할 이유는 없다.
+5. **예제 연결:** 예제에는 루트 패키지 의존성이 선언돼 있지 않다. 소스 직접 호출과 설치 패키지 소비 검증을 구분한다. 공개 진입점 검증이 목적이면 빌드된 패키지를 실제로 설치한 소비 환경이 필요하다.
+6. **생성 파일:** `dist/`는 생성 파일이며 현재 일부 파일은 Git에서 추적된다. 빌드 후 생성물의 변경 여부를 확인한다.

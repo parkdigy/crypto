@@ -9,7 +9,7 @@ var hasRequiredUtf8;
 function requireUtf8 () {
 	if (hasRequiredUtf8) return utf8$1;
 	hasRequiredUtf8 = 1;
-	(function (exports$1) {
+	(function (exports) {
 (function(root) {
 
 			var stringFromCharCode = String.fromCharCode;
@@ -210,7 +210,7 @@ function requireUtf8 () {
 			root.encode = utf8encode;
 			root.decode = utf8decode;
 
-		}(exports$1)); 
+		}(exports)); 
 	} (utf8$1));
 	return utf8$1;
 }var utf8Exports = requireUtf8();
